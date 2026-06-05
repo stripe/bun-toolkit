@@ -1,1 +1,5 @@
-export {getAssetDir, isEmbedded, resolveAsset} from './runtime/embedded-assets';
+export {
+  getAssetDir,
+  isEmbedded,
+  resolveAsset,
+} from "./runtime/embedded-assets";

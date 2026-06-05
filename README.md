@@ -24,9 +24,9 @@ Shared Bun binary infrastructure: asset embedding, manifest generation, and cros
 ### 2. Use the runtime in your code
 
 ```ts
-import { resolveAsset } from '@stripe/bun-toolkit/runtime';
+import { resolveAsset } from "@stripe/bun-toolkit/runtime";
 
-const specPath = resolveAsset('openapi/spec.yaml');
+const specPath = resolveAsset("openapi/spec.yaml");
 ```
 
 ### 3. Build binaries

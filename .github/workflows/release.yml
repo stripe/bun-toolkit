@@ -31,9 +31,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@stripe'
+          node-version: "22"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@stripe"
           cache: pnpm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -53,9 +53,8 @@ jobs:
         with:
           publish: pnpm run release
           version: pnpm run version-package
-          title: 'Version Package'
-          commit: 'Version Package'
+          title: "Version Package"
+          commit: "Version Package"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
