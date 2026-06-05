@@ -1,5 +1,11 @@
 # @stripe/bun-toolkit
 
+## 0.3.0
+
+### Minor Changes
+
+- [#4](https://github.com/stripe/bun-toolkit/pull/4) [`1dd00bb`](https://github.com/stripe/bun-toolkit/commit/1dd00bb0e608213c380fa884e24d26975fe57b54) Thanks [@jar-stripe](https://github.com/jar-stripe)! - Make the pre-compilation build script configurable via `bun.buildScript` in package.json. Defaults to `"prebuild-binary"`. If the script doesn't exist, the build step is skipped. This avoids hijacking the conventional `build` script name.
+
 ## 0.2.0
 
 ### Minor Changes
