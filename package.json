@@ -1,6 +1,6 @@
 {
   "name": "@stripe/bun-toolkit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shared Bun binary infrastructure: asset embedding, manifest generation, and cross-compilation",
   "type": "commonjs",
   "exports": {
@@ -18,7 +18,9 @@
   },
   "typesVersions": {
     "*": {
-      "runtime": ["./dist/runtime/embedded-assets.d.ts"]
+      "runtime": [
+        "./dist/runtime/embedded-assets.d.ts"
+      ]
     }
   },
   "bin": {
