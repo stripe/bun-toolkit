@@ -14,9 +14,15 @@
  *   Dev mode: `getAssetDir()` returns the repo root, where assets exist
  *   on disk in their original locations.
  */
-import {mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
-import {tmpdir} from 'node:os';
-import * as path from 'node:path';
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import * as path from "node:path";
 
 declare global {
   // eslint-disable-next-line no-var
@@ -32,29 +38,31 @@ const getManifest = (): Record<string, string> | null => {
 const repoRoot = (): string => {
   // When bundled by esbuild into a consumer's dist/, __dirname is the
   // consumer's dist/ directory. The repo root is one level up.
-  return path.resolve(__dirname, '..');
+  return path.resolve(__dirname, "..");
 };
 
 const extractAll = (tempPrefix: string): string => {
   const manifest = getManifest();
   if (!manifest) {
-    throw new Error('extractAll called but no embedded asset manifest is present');
+    throw new Error(
+      "extractAll called but no embedded asset manifest is present",
+    );
   }
 
   const tmpDir = mkdtempSync(path.join(tmpdir(), tempPrefix));
 
   for (const [logicalPath, bunfsPath] of Object.entries(manifest)) {
     const destPath = path.join(tmpDir, logicalPath);
-    mkdirSync(path.dirname(destPath), {recursive: true});
+    mkdirSync(path.dirname(destPath), { recursive: true });
     // Use readFileSync + writeFileSync instead of copyFileSync because
     // Bun's $bunfs/ virtual paths don't support kernel-level copy syscalls
     // (sendfile/copy_file_range) that copyFileSync uses on Linux.
     writeFileSync(destPath, readFileSync(bunfsPath));
   }
 
-  process.on('exit', () => {
+  process.on("exit", () => {
     try {
-      rmSync(tmpDir, {recursive: true, force: true});
+      rmSync(tmpDir, { recursive: true, force: true });
     } catch {
       // Process is exiting — nothing useful to do with the error
     }
@@ -76,7 +84,7 @@ const extractAll = (tempPrefix: string): string => {
  *
  * @param tempPrefix - Prefix for the temp directory name (default: `'bun-toolkit-assets-'`).
  */
-export const getAssetDir = (tempPrefix = 'bun-toolkit-assets-'): string => {
+export const getAssetDir = (tempPrefix = "bun-toolkit-assets-"): string => {
   if (!getManifest()) {
     return repoRoot();
   }
