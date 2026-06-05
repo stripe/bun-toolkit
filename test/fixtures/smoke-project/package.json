@@ -7,7 +7,7 @@
     "smoke-test": "./dist/main.js"
   },
   "scripts": {
-    "build": "cp src/main.js dist/main.js"
+    "prebuild-binary": "cp src/main.js dist/main.js"
   },
   "bun": {
     "assets": [

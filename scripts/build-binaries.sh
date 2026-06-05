@@ -108,15 +108,26 @@ if [ -e "$out_dir" ]; then
 fi
 mkdir -p "$out_dir"
 
-# Build the consumer project (detect package manager from lock file)
-if [ -f "pnpm-lock.yaml" ]; then
-  pnpm build
-elif [ -f "yarn.lock" ]; then
-  yarn build
-elif [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
-  bun run build
+# Run the consumer's build script if it exists.
+# Reads bun.buildScript from package.json (default: "prebuild-binary").
+build_script=$(jq -r '.bun.buildScript // empty' package.json)
+if [ -z "$build_script" ]; then
+  build_script="prebuild-binary"
+fi
+
+if jq -e --arg s "$build_script" '.scripts | has($s)' package.json >/dev/null 2>&1; then
+  echo "Running build script: $build_script"
+  if [ -f "pnpm-lock.yaml" ]; then
+    pnpm run "$build_script"
+  elif [ -f "yarn.lock" ]; then
+    yarn run "$build_script"
+  elif [ -f "bun.lockb" ] || [ -f "bun.lock" ]; then
+    bun run "$build_script"
+  else
+    npm run "$build_script"
+  fi
 else
-  npm run build
+  echo "No '$build_script' script found in package.json, skipping build step"
 fi
 
 # Generate embedded asset manifest if bun.assets is declared.

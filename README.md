@@ -16,10 +16,15 @@ Shared Bun binary infrastructure: asset embedding, manifest generation, and cros
 {
   "bun": {
     "assets": ["openapi/*.yaml", "assets/**"],
-    "entry": "./dist/main.js"
+    "entry": "./dist/main.js",
+    "buildScript": "prebuild-binary"
   }
 }
 ```
+
+- `assets` — glob patterns for files to embed in the binary
+- `entry` — the JS entrypoint to re-export from the generated manifest
+- `buildScript` — (optional) package.json script to run before compilation. Defaults to `"prebuild-binary"`. Skipped if the script doesn't exist.
 
 ### 2. Use the runtime in your code
 
