@@ -115,6 +115,10 @@ if [ -z "$build_script" ]; then
   build_script="prebuild-binary"
 fi
 
+# Ensure NODE_AUTH_TOKEN is set (even to empty) so package managers don't
+# choke on ${NODE_AUTH_TOKEN} in .npmrc when running scripts locally.
+export NODE_AUTH_TOKEN="${NODE_AUTH_TOKEN:-}"
+
 if jq -e --arg s "$build_script" '.scripts | has($s)' package.json >/dev/null 2>&1; then
   echo "Running build script: $build_script"
   if [ -f "pnpm-lock.yaml" ]; then
