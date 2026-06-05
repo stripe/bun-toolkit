@@ -1,0 +1,57 @@
+{
+  "name": "@stripe/bun-toolkit",
+  "version": "0.1.0",
+  "description": "Shared Bun binary infrastructure: asset embedding, manifest generation, and cross-compilation",
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./runtime": {
+      "types": "./dist/runtime/embedded-assets.d.ts",
+      "import": "./dist/runtime/embedded-assets.js",
+      "require": "./dist/runtime/embedded-assets.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "runtime": ["./dist/runtime/embedded-assets.d.ts"]
+    }
+  },
+  "bin": {
+    "bun-generate-manifest": "./scripts/generate-manifest.sh",
+    "bun-build-binaries": "./scripts/build-binaries.sh"
+  },
+  "files": [
+    "dist",
+    "scripts"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepublishOnly": "pnpm build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stripe/bun-toolkit.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "prettier": "^3.8.0",
+    "typescript": "^5.8.0",
+    "vitest": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@10.15.1"
+}
