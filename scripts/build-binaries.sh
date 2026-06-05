@@ -110,10 +110,12 @@ mkdir -p "$out_dir"
 
 # Run the consumer's build script if it exists.
 # Reads bun.buildScript from package.json (default: "prebuild-binary").
-build_script=$(jq -r '.bun.buildScript // "prebuild-binary"' package.json)
-has_script=$(jq -r --arg s "$build_script" '.scripts[$s] // empty' package.json)
+build_script=$(jq -r '.bun.buildScript // empty' package.json)
+if [ -z "$build_script" ]; then
+  build_script="prebuild-binary"
+fi
 
-if [ -n "$has_script" ]; then
+if jq -e --arg s "$build_script" '.scripts | has($s)' package.json >/dev/null 2>&1; then
   echo "Running build script: $build_script"
   if [ -f "pnpm-lock.yaml" ]; then
     pnpm run "$build_script"
