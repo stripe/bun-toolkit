@@ -66,13 +66,20 @@ if (!fs.existsSync(entryAbs)) {
   process.exit(1);
 }
 
+// bun.assetRoot: resolve asset globs relative to this directory instead of cwd.
+// Manifest keys will also be relative to assetRoot, so consumers get stable keys
+// regardless of where the package lives in the repo tree.
+const assetRoot = bunConfig.assetRoot
+  ? path.resolve(cwd, bunConfig.assetRoot)
+  : cwd;
+
 const files = [];
 for (const pattern of patterns) {
   const glob = new Bun.Glob(pattern);
-  const matched = [...glob.scanSync({ cwd, onlyFiles: true, dot: false })];
+  const matched = [...glob.scanSync({ cwd: assetRoot, onlyFiles: true, dot: false })];
   if (matched.length === 0) {
     console.error(`ERROR: asset pattern matched no files: ${pattern}`);
-    console.error(`       (evaluated relative to ${cwd})`);
+    console.error(`       (evaluated relative to ${assetRoot})`);
     process.exit(1);
   }
   files.push(...matched);
@@ -91,8 +98,9 @@ const importNames = [];
 for (let i = 0; i < uniqueFiles.length; i++) {
   const name = `_a${i}`;
   importNames.push(name);
-  // Paths are relative to dist/ (where this file lives)
-  const relPath = "../" + uniqueFiles[i];
+  // Import paths must be relative to the output file (dist/bun-compile-entrypoint.js).
+  const absFile = path.join(assetRoot, uniqueFiles[i]);
+  const relPath = path.relative(path.dirname(outputAbs), absFile);
   lines.push(`import ${name} from ${JSON.stringify(relPath)} with { type: "file" };`);
 }
 
@@ -104,6 +112,15 @@ for (let i = 0; i < uniqueFiles.length; i++) {
 }
 lines.push("};");
 lines.push("");
+// Bun compiled binaries set process.argv[0] to "bun". Rewrite it to the
+// basename of argv[1] (the actual binary path) so CLI frameworks like yargs
+// derive the correct program name.
+lines.push(
+  `if (process.argv[0] === "bun" && process.argv[1]) {`,
+  `  process.argv[0] = process.argv[1].split("/").pop().replace(/\\.exe$/, "");`,
+  `}`,
+  "",
+);
 lines.push(`await import(${JSON.stringify("./" + entryRelToOutput)});`);
 lines.push("");
 
