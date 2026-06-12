@@ -73,6 +73,16 @@ const assetRoot = bunConfig.assetRoot
   ? path.resolve(cwd, bunConfig.assetRoot)
   : cwd;
 
+if (bunConfig.assetRoot) {
+  if (!fs.existsSync(assetRoot) || !fs.statSync(assetRoot).isDirectory()) {
+    console.error(`ERROR: bun.assetRoot does not resolve to an existing directory`);
+    console.error(`       configured: ${JSON.stringify(bunConfig.assetRoot)}`);
+    console.error(`       resolved:   ${assetRoot}`);
+    process.exit(1);
+  }
+  console.log(`Using assetRoot: ${assetRoot} (from ${JSON.stringify(bunConfig.assetRoot)} relative to cwd)`);
+}
+
 const files = [];
 for (const pattern of patterns) {
   const glob = new Bun.Glob(pattern);
@@ -100,7 +110,8 @@ for (let i = 0; i < uniqueFiles.length; i++) {
   importNames.push(name);
   // Import paths must be relative to the output file (dist/bun-compile-entrypoint.js).
   const absFile = path.join(assetRoot, uniqueFiles[i]);
-  const relPath = path.relative(path.dirname(outputAbs), absFile);
+  let relPath = path.relative(path.dirname(outputAbs), absFile).split(path.sep).join("/");
+  if (!relPath.startsWith(".")) relPath = "./" + relPath;
   lines.push(`import ${name} from ${JSON.stringify(relPath)} with { type: "file" };`);
 }
 
