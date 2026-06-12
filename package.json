@@ -1,6 +1,6 @@
 {
   "name": "@stripe/bun-toolkit",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Shared Bun binary infrastructure: asset embedding, manifest generation, and cross-compilation",
   "type": "commonjs",
   "exports": {
