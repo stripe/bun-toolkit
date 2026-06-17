@@ -1,5 +1,7 @@
 # @stripe/bun-toolkit
 
+> **Internal use only.** This package is published publicly for convenience but is intended for use by Stripe-internal projects. It is not supported for general community use and carries no stability guarantees for external consumers.
+
 Shared Bun binary infrastructure: asset embedding, manifest generation, and cross-compilation.
 
 ## What this provides
