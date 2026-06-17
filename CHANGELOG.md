@@ -1,5 +1,11 @@
 # @stripe/bun-toolkit
 
+## 0.4.1
+
+### Patch Changes
+
+- [#11](https://github.com/stripe/bun-toolkit/pull/11) [`7cb08c8`](https://github.com/stripe/bun-toolkit/commit/7cb08c8b010488ed5089d57f98576155670c12ca) Thanks [@jar-stripe](https://github.com/jar-stripe)! - Add internal-use notice to README.
+
 ## 0.4.0
 
 ### Minor Changes
