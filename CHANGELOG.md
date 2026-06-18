@@ -1,5 +1,11 @@
 # @stripe/bun-toolkit
 
+## 0.4.2
+
+### Patch Changes
+
+- [#13](https://github.com/stripe/bun-toolkit/pull/13) [`07f64ae`](https://github.com/stripe/bun-toolkit/commit/07f64ae81fcf3e344903fbb5257f80f336b319a6) Thanks [@jar-stripe](https://github.com/jar-stripe)! - Switch publishing from GitHub Packages to npm.
+
 ## 0.4.1
 
 ### Patch Changes
