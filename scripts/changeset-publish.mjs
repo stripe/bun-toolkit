@@ -33,7 +33,17 @@ try {
 }
 
 if (alreadyPublished) {
-  console.log(`${tag} is already published, nothing to do.`);
+  console.log(`${tag} is already published.`);
+
+  // Ensure the git tag exists so changesets/action can detect the release.
+  try {
+    run(`git rev-parse -q --verify "refs/tags/${tag}"`);
+    console.log(`Git tag ${tag} already exists, nothing to do.`);
+  } catch {
+    console.log(`Creating missing git tag ${tag}...`);
+    run(`git tag "${tag}"`);
+  }
+
   process.exit(0);
 }
 
