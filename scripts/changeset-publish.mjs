@@ -10,17 +10,17 @@
  * release and create a GitHub release.
  */
 
-import {execSync} from 'node:child_process';
-import {readFileSync, readdirSync, rmSync} from 'node:fs';
-import {join} from 'node:path';
+import { execSync } from "node:child_process";
+import { readFileSync, readdirSync, rmSync } from "node:fs";
+import { join } from "node:path";
 
 function run(cmd, opts = {}) {
   console.log(`$ ${cmd}`);
-  return execSync(cmd, {encoding: 'utf-8', stdio: 'pipe', ...opts}).trim();
+  return execSync(cmd, { encoding: "utf-8", stdio: "pipe", ...opts }).trim();
 }
 
-const pkg = JSON.parse(readFileSync('package.json', 'utf-8'));
-const {name, version} = pkg;
+const pkg = JSON.parse(readFileSync("package.json", "utf-8"));
+const { name, version } = pkg;
 const tag = `${name}@${version}`;
 
 console.log(`Checking if ${tag} is already published...`);
@@ -41,16 +41,16 @@ if (alreadyPublished) {
 console.log(`Publishing ${tag}...`);
 
 // Clean any stale tarballs
-const staleTarballs = readdirSync('.').filter(f => f.endsWith('.tgz'));
+const staleTarballs = readdirSync(".").filter((f) => f.endsWith(".tgz"));
 for (const f of staleTarballs) {
   rmSync(f);
 }
 
-run('pnpm pack');
+run("pnpm pack");
 
-const tarball = readdirSync('.').find(f => f.endsWith('.tgz'));
+const tarball = readdirSync(".").find((f) => f.endsWith(".tgz"));
 if (!tarball) {
-  console.error('pnpm pack did not produce a tarball');
+  console.error("pnpm pack did not produce a tarball");
   process.exit(1);
 }
 
