@@ -40,7 +40,7 @@
     "prepublishOnly": "pnpm build",
     "changeset": "changeset",
     "version-package": "changeset version",
-    "release": "changeset publish"
+    "release": "node scripts/changeset-publish.mjs"
   },
   "repository": {
     "type": "git",
