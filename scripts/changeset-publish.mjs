@@ -12,7 +12,6 @@
 
 import { execSync } from "node:child_process";
 import { readFileSync, readdirSync, rmSync } from "node:fs";
-import { join } from "node:path";
 
 function run(cmd, opts = {}) {
   console.log(`$ ${cmd}`);
