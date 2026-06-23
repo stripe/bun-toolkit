@@ -49,22 +49,26 @@ if (alreadyPublished) {
 
 console.log(`Publishing ${tag}...`);
 
-// Clean any stale tarballs
-const staleTarballs = readdirSync(".").filter((f) => f.endsWith(".tgz"));
-for (const f of staleTarballs) {
-  rmSync(f);
-}
+const tgzBefore = new Set(readdirSync(".").filter((f) => f.endsWith(".tgz")));
 
 run("pnpm pack");
 
-const tarball = readdirSync(".").find((f) => f.endsWith(".tgz"));
-if (!tarball) {
-  console.error("pnpm pack did not produce a tarball");
+const tgzAfter = readdirSync(".").filter((f) => f.endsWith(".tgz"));
+const created = tgzAfter.filter((f) => !tgzBefore.has(f));
+if (created.length !== 1) {
+  console.error(
+    `Expected pnpm pack to produce exactly 1 tarball, found ${created.length}`,
+  );
   process.exit(1);
 }
 
-run(`npm publish "${tarball}" --provenance --access public`);
-rmSync(tarball);
+const tarball = created[0];
+
+try {
+  run(`npm publish "${tarball}" --provenance --access public`);
+} finally {
+  rmSync(tarball, { force: true });
+}
 
 // Create git tag for changesets/action to detect the release
 run(`git tag "${tag}"`);
