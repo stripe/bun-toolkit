@@ -4,10 +4,83 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
 jobs:
+  # ── Ultra-fast standalone check (~15s) ─────────────────────────
+  # No pnpm install needed — npx downloads the changeset CLI directly.
+  changeset:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check changeset status
+        run: npx @changesets/cli@2 status --since=origin/main
+
+  # ── Guard against unintentional major version bumps ─────────────
+  # Runs only on the "Version Package" PR created by changesets/action.
+  # Fails if package.json has a major version bump unless the PR
+  # description contains "INTENTIONAL MAJOR".
+  no-major-bumps:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.title == 'Version Package'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Guard against unintentional major version bumps
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          changed=$(git diff --name-only "origin/$GITHUB_BASE_REF"...HEAD -- '**/package.json')
+
+          majors=""
+          for f in $changed; do
+            [ -f "$f" ] || continue
+            new_ver=$(jq -r '.version // empty' "$f")
+            old_ver=$(git show "origin/$GITHUB_BASE_REF:$f" 2>/dev/null | jq -r '.version // empty') || continue
+            [ -z "$old_ver" ] || [ -z "$new_ver" ] && continue
+
+            old_major=${old_ver%%.*}
+            new_major=${new_ver%%.*}
+            if [ "$new_major" -gt "$old_major" ] 2>/dev/null; then
+              pkg=$(jq -r '.name // empty' "$f")
+              majors="$majors  - $pkg: $old_ver -> $new_ver\n"
+            fi
+          done
+
+          if [ -z "$majors" ]; then
+            echo "No major version bumps detected."
+            exit 0
+          fi
+
+          printf "Major version bump(s) detected:\n%b\n" "$majors"
+
+          if printf '%s' "$PR_BODY" | grep -qF 'INTENTIONAL MAJOR'; then
+            echo "Override found: 'INTENTIONAL MAJOR' in PR description. Allowing."
+            exit 0
+          fi
+
+          echo "::error::To allow major bumps, add 'INTENTIONAL MAJOR' to the PR description."
+          exit 1
+
   build-test-format:
     runs-on: ubuntu-latest
 
