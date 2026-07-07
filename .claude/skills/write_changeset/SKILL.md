@@ -38,7 +38,7 @@ Every PR requires a changeset file. CI enforces this.
 
 ```markdown
 ---
-'@stripe/bun-toolkit': minor
+"@stripe/bun-toolkit": minor
 ---
 
 Add support for X
@@ -59,7 +59,7 @@ Fix lint configuration
 
 ```markdown
 ---
-'@stripe/bun-toolkit': patch
+"@stripe/bun-toolkit": patch
 ---
 
 Fix edge case in glob resolution when path contains spaces
@@ -69,7 +69,7 @@ Fix edge case in glob resolution when path contains spaces
 
 ```markdown
 ---
-'@stripe/bun-toolkit': minor
+"@stripe/bun-toolkit": minor
 ---
 
 Add watchGlob helper for reactive file watching

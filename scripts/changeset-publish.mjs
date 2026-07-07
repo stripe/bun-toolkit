@@ -65,7 +65,9 @@ if (created.length !== 1) {
 const tarball = created[0];
 
 try {
-  run(`npm publish "${tarball}" --@stripe:registry=https://registry.npmjs.org --provenance --access public`);
+  run(
+    `npm publish "${tarball}" --@stripe:registry=https://registry.npmjs.org --provenance --access public`,
+  );
 } finally {
   rmSync(tarball, { force: true });
 }
